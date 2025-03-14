@@ -15,6 +15,12 @@ router.get("/all", async(req, res)=>{
 router.put("/:id", async (req, res)=>{
       if(req.body.userId === req.params.id){
         try {
+            if (req.body.username) {
+                const existingUser = await User.findOne({ username: req.body.username });
+                if (existingUser && existingUser._id.toString() !== req.params.id) {
+                  return res.status(400).json("Username already exists");
+                }
+              }
             await User.findByIdAndUpdate(req.params.id, {
                 $set: req.body
             });
